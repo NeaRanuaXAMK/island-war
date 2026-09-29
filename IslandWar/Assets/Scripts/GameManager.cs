@@ -1,37 +1,54 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
-    
     [SerializeField] private int money;
-    [SerializeField] TextMeshProUGUI moneyText;
-    [SerializeField] float x;
-    public Tikku_ukko tikku_Ukko;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private TextMeshProUGUI moneyText;
+
+    public Troop troop;
+
+    public int troopCount = 1;
+    public int troopCost = 100;
+
+    bool troopsAway = false;
+
     void Start()
     {
-         
+        UpdateUI();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void AddMoney(int amount)
     {
-        x = tikku_Ukko.transform.position.x;
+        money += amount;
+        troopsAway = false;
+        UpdateUI();
+    }
 
-        if (x <= -6)
+    public void SendTroops()
+    {
+        if (troopsAway) return;
+        troopsAway = true;
+
+        for (int i = 0; i < troopCount; i++)
         {
-            moneyText.text = "100$";
+            Troop copy = Instantiate(troop);
+            copy.StartMoving();
         }
     }
 
-    void addMoney()
+    public void BuyTroop()
     {
-        if(x == -6)
+        if (money >= troopCost)
         {
-            moneyText.text = money.ToString() + "$";
+            money = money - troopCost;
+            troopCount = troopCount + 1;
+            UpdateUI();
         }
+    }
+
+    void UpdateUI()
+    {
+        moneyText.text = money + "$";
     }
 }
