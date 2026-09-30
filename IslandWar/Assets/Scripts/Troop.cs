@@ -4,7 +4,7 @@ public class Troop : MonoBehaviour
 {
     public float speed = 2f;
     public float stealTime = 1f;
-    public int loot = 100;
+    public int loot = 20;
 
     public Transform lootPoint;
     public GameManager gameManager;
@@ -64,4 +64,5 @@ public class Troop : MonoBehaviour
             going = true;
         }
     }
+
 }

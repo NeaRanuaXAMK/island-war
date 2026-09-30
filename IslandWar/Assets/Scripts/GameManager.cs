@@ -10,8 +10,10 @@ public class GameManager : MonoBehaviour
 
     public int troopCount = 1;
     public int troopCost = 100;
-
+    public Transform pointA;
+    public Transform pointB;
     bool troopsAway = false;
+    bool choosing = false;
 
     void Start()
     {
@@ -25,14 +27,15 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void SendTroops()
+    public void SendTroops(Transform point)
     {
-        if (troopsAway) return;
+        choosing = false;
         troopsAway = true;
 
         for (int i = 0; i < troopCount; i++)
         {
             Troop copy = Instantiate(troop);
+            copy.lootPoint = point;
             copy.StartMoving();
         }
     }
@@ -51,4 +54,22 @@ public class GameManager : MonoBehaviour
     {
         moneyText.text = money + "$";
     }
+
+    public void sendToA()
+    {
+        if (choosing)
+            SendTroops(pointA);
+    }
+    public void sendToB()
+    {
+        if (choosing)
+            SendTroops(pointB);
+    }
+    public void PressSend()
+    {
+        if (troopsAway) return;
+        choosing = true;
+    }
+
+
 }
