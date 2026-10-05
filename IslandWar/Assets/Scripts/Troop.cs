@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class Troop : MonoBehaviour
@@ -6,63 +7,44 @@ public class Troop : MonoBehaviour
     public float stealTime = 1f;
     public int loot = 20;
 
-    public Transform lootPoint;
     public GameManager gameManager;
+    public Vector3 target;
+    public Vector3 home;
+    public TextMeshProUGUI timerText;
 
-    bool going = false;
-    bool stealing = false;
-    bool returning = false;
-
-    Vector3 home;
+    int phase = 0; // 0 = menossa 1= varastaa 2 = palaa takas
     float timer;
-
-    void Start()
-    {
-        home = transform.position;
-    }
 
     void Update()
     {
-        if (going)
+        if (phase == 0)
         {
-            transform.position = Vector3.MoveTowards(transform.position, lootPoint.position, speed * Time.deltaTime);
-
-            if (transform.position == lootPoint.position)
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+            if (transform.position == target)
             {
-                going = false;
-                stealing = true;
+                phase = 1;
                 timer = stealTime;
             }
         }
-        else if (stealing)
+        else if (phase == 1)
         {
-            timer = timer - Time.deltaTime;
+            timer -= Time.deltaTime;
+            timerText.text = Mathf.Max(timer, 0).ToString("F1") + "s";
 
             if (timer <= 0)
             {
-                stealing = false;
-                returning = true;
+                timerText.text = "";
+                phase = 2;
             }
         }
-        else if (returning)
+        else if (phase == 2)
         {
             transform.position = Vector3.MoveTowards(transform.position, home, speed * Time.deltaTime);
-
             if (transform.position == home)
             {
-                returning = false;
-                gameManager.AddMoney(loot);
+                gameManager.TroopReturned(loot);
                 Destroy(gameObject);
             }
         }
     }
-
-    public void StartMoving()
-    {
-        if (!going && !stealing && !returning)
-        {
-            going = true;
-        }
-    }
-
 }
