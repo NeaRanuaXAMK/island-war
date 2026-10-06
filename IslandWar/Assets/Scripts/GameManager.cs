@@ -323,6 +323,7 @@ public class GameManager : MonoBehaviour
             troop.speed = troopSpeed;
             troop.loot = troopLoot;
             troop.stealTime = GetStealTime();
+            troop.playSound = (i == 0);
             troopsOut++;
         }
     }
