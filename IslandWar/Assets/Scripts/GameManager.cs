@@ -1,5 +1,7 @@
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -21,6 +23,7 @@ public class GameManager : MonoBehaviour
     public int troopCost = 100;
 
     public GameObject mainMenuPanel;
+    public GameObject pauseMenuPanel;
     public GameObject upgradePanel;
     public TextMeshProUGUI troopCostText;
     public TextMeshProUGUI speedCostText;
@@ -42,6 +45,8 @@ public class GameManager : MonoBehaviour
     public int speedCost = 50;
     public int lootCost = 50;
 
+    public InputActionReference pause;
+
     int troopsOut = 0;
     bool choosing = false;
 
@@ -59,6 +64,29 @@ public class GameManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         timer = 0f;
         isRunning = true;
+    }
+
+    public void PauseGame()
+    {
+        pauseMenuPanel.SetActive(true);
+        isRunning = false;
+    }
+
+    public void ExitToMenu()
+    {
+        pauseMenuPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+        isRunning = false;
+        money = 0;
+        happiness = 0;
+        timer = 0f;
+        timerSeconds = 0;
+        timerMinutes = 0;
+        timerHours = 0;
+        troopCount = 1;
+        troopSpeed = 2f;
+        troopLoot = 20;
+        UpdateUI();
     }
 
     public void Update()
@@ -106,6 +134,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void PressContinue()
+    {
+        pauseMenuPanel.SetActive(false);
+        isRunning = true;
+    }
     public void BuyTroop()
     {
         if (money >= troopCost)
@@ -203,5 +236,14 @@ public class GameManager : MonoBehaviour
         troopCostText.text = "Troop +1  (" + troopCost + "$)";
         speedCostText.text = "Speed +0.5  (" + speedCost + "$)";
         lootCostText.text = "Loot +5  (" + lootCost + "$)";
+    }
+
+    private void OnEnable()
+    {
+        pause.action.started += Pause;
+    }
+    private void Pause(InputAction.CallbackContext context)
+    {
+        PauseGame();
     }
 }
