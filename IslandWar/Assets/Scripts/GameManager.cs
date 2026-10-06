@@ -1,12 +1,18 @@
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public int money;
+    public int happiness;
+
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI timerTextA;
     public TextMeshProUGUI timerTextB;
+    public TextMeshProUGUI runtimeTimer;
 
     public GameObject troopPrefab;
     public Transform homePoint;
@@ -16,16 +22,30 @@ public class GameManager : MonoBehaviour
     public int troopCount = 1;
     public int troopCost = 100;
 
-    // Upgrade window
+    public GameObject mainMenuPanel;
+    public GameObject pauseMenuPanel;
     public GameObject upgradePanel;
     public TextMeshProUGUI troopCostText;
     public TextMeshProUGUI speedCostText;
     public TextMeshProUGUI lootCostText;
 
+    public Button pointAButton;
+    public Button pointBButton;
+    public Sprite spriteBaseNormal;
+    public Sprite spriteBaseHighlight;
+
     public float troopSpeed = 2f;
     public int troopLoot = 25;
+    public float timer;
+    public int timerSeconds;
+    public int timerMinutes;
+    public int timerHours;
+    public bool isRunning = false;
+
     public int speedCost = 50;
     public int lootCost = 50;
+
+    public InputActionReference pause;
 
     // Happiness
     public GameObject buildingsPanel;
@@ -34,7 +54,6 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI parkCostText;
     public TextMeshProUGUI schoolCostText;
 
-    public int happiness = 0;
     public float baseStealTime = 3f;
 
     public int waterCost = 100;
@@ -51,6 +70,47 @@ public class GameManager : MonoBehaviour
         upgradePanel.SetActive(false);
         buildingsPanel.SetActive(false);
         UpdateUI();
+        InvokeRepeating("UpdateTimer", .01f, 1.0f);
+    }
+
+    public void StartGame()
+    {
+        mainMenuPanel.SetActive(false);
+        timer = 0f;
+        isRunning = true;
+    }
+
+    public void PauseGame()
+    {
+        pauseMenuPanel.SetActive(true);
+        isRunning = false;
+    }
+
+    public void ExitToMenu()
+    {
+        pauseMenuPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+        isRunning = false;
+        money = 0;
+        happiness = 0;
+        timer = 0f;
+        timerSeconds = 0;
+        timerMinutes = 0;
+        timerHours = 0;
+        troopCount = 1;
+        troopSpeed = 2f;
+        troopLoot = 20;
+        UpdateUI();
+    }
+
+    public void Update()
+    {
+        if (isRunning == true)
+        {
+            timer = timer + Time.deltaTime;
+        }
+
+        timerSeconds = (int)timer;
     }
 
     // Happiness raha multiplier
@@ -70,12 +130,46 @@ public class GameManager : MonoBehaviour
         upgradePanel.SetActive(!upgradePanel.activeSelf);
     }
 
+    public void UpdateTimer()
+    {
+        if(timerMinutes < 1)
+        {
+            runtimeTimer.text = timerSeconds.ToString() + "s";
+        }
+
+        if(timerSeconds %  60 == 0 && timerSeconds > 0)
+        {
+            timerMinutes++;
+        }
+
+        if(timerMinutes > 0 && timerMinutes < 60)
+        {
+            timerSeconds = timerSeconds - (timerMinutes * 60);
+            runtimeTimer.text = timerMinutes.ToString() + "min " + timerSeconds.ToString() + "s";
+        }
+
+        if(timerMinutes % 60 == 0 && timerMinutes > 0)
+        {
+            timerHours++;
+        }
+
+        if(timerHours > 0)
+        {
+            timerMinutes = timerMinutes - (timerHours * 60);
+            runtimeTimer.text = timerHours.ToString() + "h " + timerMinutes.ToString() + "min " + timerSeconds.ToString() + "s";
+        }
+    }
+
+    public void PressContinue()
+    {
+        pauseMenuPanel.SetActive(false);
+        isRunning = true;
+    }
     public void ToggleBuildings()
     {
         buildingsPanel.SetActive(!buildingsPanel.activeSelf);
     }
 
-    // troop upgradet
 
     public void BuyTroop()
     {
@@ -151,16 +245,31 @@ public class GameManager : MonoBehaviour
     {
         if (troopsOut > 0) return;
         choosing = true;
+        HighlightBases();
+    }
+
+    public void HighlightBases()
+    {
+        pointAButton.GetComponent<Image>().sprite = spriteBaseHighlight;
+        pointBButton.GetComponent<Image>().sprite = spriteBaseHighlight;
+    }
+
+    public void NonHighlightBases()
+    {
+        pointAButton.GetComponent<Image>().sprite = spriteBaseNormal;
+        pointBButton.GetComponent<Image>().sprite = spriteBaseNormal;
     }
 
     public void SendToA()
     {
         if (choosing) SendTroops(pointA, timerTextA);
+        NonHighlightBases();
     }
 
     public void SendToB()
     {
         if (choosing) SendTroops(pointB, timerTextB);
+        NonHighlightBases();
     }
 
     void SendTroops(Transform target, TextMeshProUGUI timerText)
@@ -204,5 +313,14 @@ public class GameManager : MonoBehaviour
         happinessText.text = "Happiness " + happiness + "/100\n"
             + "Money x" + GetMultiplier().ToString("F2")
             + "  Steal time " + GetStealTime().ToString("F1") + "s";
+    }
+
+    private void OnEnable()
+    {
+        pause.action.started += Pause;
+    }
+    private void Pause(InputAction.CallbackContext context)
+    {
+        PauseGame();
     }
 }
