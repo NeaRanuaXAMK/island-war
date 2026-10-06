@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     public GameObject mainMenuPanel;
     public GameObject pauseMenuPanel;
     public GameObject upgradePanel;
+    public GameObject statsPanel;
+    public TextMeshProUGUI statsText;
     public TextMeshProUGUI troopCostText;
     public TextMeshProUGUI speedCostText;
     public TextMeshProUGUI lootCostText;
@@ -44,6 +46,7 @@ public class GameManager : MonoBehaviour
 
     public int speedCost = 50;
     public int lootCost = 50;
+    
 
     public InputActionReference pause;
 
@@ -60,6 +63,12 @@ public class GameManager : MonoBehaviour
     public int parkCost = 250;
     public int schoolCost = 500;
 
+    int speedBought = 0;
+    int lootBought = 0;
+    int waterBought = 0;
+    int parkBought = 0;
+    int schoolBought = 0;
+
     int troopsOut = 0;
     bool choosing = false;
 
@@ -69,6 +78,7 @@ public class GameManager : MonoBehaviour
         timerTextB.text = "";
         upgradePanel.SetActive(false);
         buildingsPanel.SetActive(false);
+        statsPanel.SetActive(false);
         UpdateUI();
         InvokeRepeating("UpdateTimer", .01f, 1.0f);
     }
@@ -169,6 +179,10 @@ public class GameManager : MonoBehaviour
     {
         buildingsPanel.SetActive(!buildingsPanel.activeSelf);
     }
+    public void ToggleStats()
+{
+    statsPanel.SetActive(!statsPanel.activeSelf);
+}
 
 
     public void BuyTroop()
@@ -189,6 +203,7 @@ public class GameManager : MonoBehaviour
             money -= speedCost;
             troopSpeed += 0.5f;
             speedCost = Mathf.CeilToInt(speedCost * 1.15f);
+            speedBought++;
             UpdateUI();
         }
     }
@@ -200,6 +215,7 @@ public class GameManager : MonoBehaviour
             money -= lootCost;
             troopLoot += 5;
             lootCost = Mathf.CeilToInt(lootCost * 1.15f);
+            lootBought++;
             UpdateUI();
         }
     }
@@ -213,6 +229,7 @@ public class GameManager : MonoBehaviour
             money -= waterCost;
             happiness = Mathf.Min(happiness + 5, 100);
             waterCost = Mathf.CeilToInt(waterCost * 1.15f);
+            waterBought++;
             UpdateUI();
         }
     }
@@ -224,6 +241,7 @@ public class GameManager : MonoBehaviour
             money -= parkCost;
             happiness = Mathf.Min(happiness + 10, 100);
             parkCost = Mathf.CeilToInt(parkCost * 1.15f);
+            parkBought++;
             UpdateUI();
         }
     }
@@ -235,6 +253,7 @@ public class GameManager : MonoBehaviour
             money -= schoolCost;
             happiness = Mathf.Min(happiness + 15, 100);
             schoolCost = Mathf.CeilToInt(schoolCost * 1.15f);
+            schoolBought++;
             UpdateUI();
         }
     }
@@ -313,6 +332,16 @@ public class GameManager : MonoBehaviour
         happinessText.text = "Happiness " + happiness + "/100\n"
             + "Money x" + GetMultiplier().ToString("F2")
             + "  Steal time " + GetStealTime().ToString("F1") + "s";
+        statsText.text =
+        "Troops: " + troopCount + "\n" +
+        "Speed upgrades: " + speedBought + "\n" +
+        "Loot upgrades: " + lootBought + "\n" +
+        "\n" +
+        "Water purifiers: " + waterBought + "\n" +
+        "Parks: " + parkBought + "\n" +
+        "Schools: " + schoolBought + "\n" +
+        "\n" +
+        "Happiness: " + happiness + "/100";
     }
 
     private void OnEnable()
