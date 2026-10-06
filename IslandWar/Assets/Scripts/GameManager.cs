@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     public GameObject mainMenuPanel;
     public GameObject pauseMenuPanel;
     public GameObject goalAchievedPanel;
+    public GameObject pressPPanel;
     public GameObject upgradePanel;
     public GameObject statsPanel;
     public TextMeshProUGUI statsText;
@@ -48,6 +49,9 @@ public class GameManager : MonoBehaviour
     public int timerMinutes;
     public int timerHours;
     public bool isRunning = false;
+    public int finalSeconds;
+    public int finalMinutes;
+    public int finalHours;
 
     public int speedCost = 50;
     public int lootCost = 50;
@@ -92,6 +96,7 @@ public class GameManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         timer = 0f;
         isRunning = true;
+        pressPPanel.SetActive(true);
     }
 
     public void PauseGame()
@@ -126,6 +131,11 @@ public class GameManager : MonoBehaviour
         }
 
         timerSeconds = (int)timer;
+
+        if(timerSeconds > 2)
+        {
+            pressPPanel.SetActive(false);
+        }
     }
 
     // Happiness raha multiplier
@@ -353,7 +363,14 @@ public class GameManager : MonoBehaviour
 
     private void IsGoalAchieved()
     {
-        if(timerHours > 0)
+        finalHours = timerHours;
+        
+        if (finalHours > 0) { finalMinutes = timerMinutes - (finalHours * 60); }
+        else { finalMinutes = timerMinutes; }
+
+        finalSeconds = timerSeconds - (finalMinutes * 60);
+
+        if (timerHours > 0)
         {
             goalAchievedTimer.text = timerHours + "h " + timerMinutes + "min " + timerSeconds + "s";
         }
