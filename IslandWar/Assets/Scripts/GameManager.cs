@@ -7,12 +7,16 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public int money;
+    public int goalMoney;
     public int happiness;
+    public int goalHappiness;
 
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI timerTextA;
     public TextMeshProUGUI timerTextB;
     public TextMeshProUGUI runtimeTimer;
+    public TextMeshProUGUI goalText;
+    public TextMeshProUGUI goalAchievedTimer;
 
     public GameObject troopPrefab;
     public Transform homePoint;
@@ -24,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject mainMenuPanel;
     public GameObject pauseMenuPanel;
+    public GameObject goalAchievedPanel;
     public GameObject upgradePanel;
     public GameObject statsPanel;
     public TextMeshProUGUI statsText;
@@ -47,7 +52,6 @@ public class GameManager : MonoBehaviour
     public int speedCost = 50;
     public int lootCost = 50;
     
-
     public InputActionReference pause;
 
     // Happiness
@@ -99,6 +103,7 @@ public class GameManager : MonoBehaviour
     public void ExitToMenu()
     {
         pauseMenuPanel.SetActive(false);
+        goalAchievedPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
         isRunning = false;
         money = 0;
@@ -317,6 +322,7 @@ public class GameManager : MonoBehaviour
         money += Mathf.RoundToInt(loot * GetMultiplier());
         troopsOut--;
         UpdateUI();
+        IsGoalAchieved();
     }
 
     void UpdateUI()
@@ -332,6 +338,7 @@ public class GameManager : MonoBehaviour
         happinessText.text = "Happiness " + happiness + "/100\n"
             + "Money x" + GetMultiplier().ToString("F2")
             + "  Steal time " + GetStealTime().ToString("F1") + "s";
+        goalText.text = "Goal: Happiness - " + happiness + "% \n Money - " + money + "$/" + goalMoney + "$";
         statsText.text =
         "Troops: " + troopCount + "\n" +
         "Speed upgrades: " + speedBought + "\n" +
@@ -344,10 +351,39 @@ public class GameManager : MonoBehaviour
         "Happiness: " + happiness + "/100";
     }
 
+    private void IsGoalAchieved()
+    {
+        if(timerHours > 0)
+        {
+            goalAchievedTimer.text = timerHours + "h " + timerMinutes + "min " + timerSeconds + "s";
+        }
+        else
+        {
+            goalAchievedTimer.text = timerMinutes + "min " + timerSeconds + "s";
+        }
+
+        if (happiness >= goalHappiness && money >= goalMoney)
+        {
+            GoalAchieved();
+        }
+    }
+
     private void OnEnable()
     {
         pause.action.started += Pause;
     }
+
+    public void GoalAchieved()
+    {
+        isRunning = false;
+        goalAchievedPanel.SetActive(true);
+    }
+
+    public void OnApplicationQuit()
+    {
+        Application.Quit();
+    }
+
     private void Pause(InputAction.CallbackContext context)
     {
         PauseGame();
