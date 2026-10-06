@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
         mainMenuPanel.SetActive(true);
         isRunning = false;
         money = 0;
-        happiness = 0;
+        happiness = 1;
         timer = 0f;
         timerSeconds = 0;
         timerMinutes = 0;
