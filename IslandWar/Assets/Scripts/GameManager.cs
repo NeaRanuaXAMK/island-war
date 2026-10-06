@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject mainMenuPanel;
     public GameObject pauseMenuPanel;
+    public GameObject goalAchievedPanel;
     public GameObject upgradePanel;
     public GameObject statsPanel;
     public TextMeshProUGUI statsText;
@@ -47,7 +48,6 @@ public class GameManager : MonoBehaviour
     public int speedCost = 50;
     public int lootCost = 50;
     
-
     public InputActionReference pause;
 
     // Happiness
@@ -348,6 +348,18 @@ public class GameManager : MonoBehaviour
     {
         pause.action.started += Pause;
     }
+
+    public void GoalAchieved()
+    {
+        isRunning = false;
+        goalAchievedPanel.SetActive(true);
+    }
+
+    public void OnApplicationQuit()
+    {
+        Application.Quit();
+    }
+
     private void Pause(InputAction.CallbackContext context)
     {
         PauseGame();
