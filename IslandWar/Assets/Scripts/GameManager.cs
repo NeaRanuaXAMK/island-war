@@ -379,22 +379,6 @@ public class GameManager : MonoBehaviour
 
     private void IsGoalAchieved()
     {
-        finalHours = timerHours;
-        
-        if (finalHours > 0) { finalMinutes = timerMinutes - (finalHours * 60); }
-        else { finalMinutes = timerMinutes; }
-
-        finalSeconds = timerSeconds - (finalMinutes * 60);
-
-        if (timerHours > 0)
-        {
-            goalAchievedTimer.text = timerHours + "h " + timerMinutes + "min " + timerSeconds + "s";
-        }
-        else
-        {
-            goalAchievedTimer.text = timerMinutes + "min " + timerSeconds + "s";
-        }
-
         if (happiness >= goalHappiness && money >= goalMoney)
         {
             GoalAchieved();
@@ -410,6 +394,22 @@ public class GameManager : MonoBehaviour
     {
         isRunning = false;
         goalAchievedPanel.SetActive(true);
+
+        finalHours = timerHours;
+
+        if (finalHours > 0) { finalMinutes = timerMinutes - (finalHours * 60); }
+        else { finalMinutes = timerMinutes; }
+
+        finalSeconds = timerSeconds - (finalMinutes * 60);
+
+        if (timerHours > 0)
+        {
+            goalAchievedTimer.text = finalHours + "h " + finalMinutes + "min " + finalSeconds + "s";
+        }
+        else
+        {
+            goalAchievedTimer.text = finalMinutes + "min " + finalSeconds + "s";
+        }
     }
 
     public void OnApplicationQuit()
