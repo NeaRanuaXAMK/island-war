@@ -55,7 +55,10 @@ public class GameManager : MonoBehaviour
 
     public int speedCost = 50;
     public int lootCost = 50;
-    
+
+    public AudioSource musicSource;
+    public AudioClip musicClip;
+
     public InputActionReference pause;
 
     // Happiness
@@ -97,12 +100,14 @@ public class GameManager : MonoBehaviour
         timer = 0f;
         isRunning = true;
         pressPPanel.SetActive(true);
+        PlayAudio();
     }
 
     public void PauseGame()
     {
         pauseMenuPanel.SetActive(true);
         isRunning = false;
+        musicSource.Stop();
     }
 
     public void ExitToMenu()
@@ -121,6 +126,7 @@ public class GameManager : MonoBehaviour
         troopSpeed = 2f;
         troopLoot = 20;
         UpdateUI();
+        musicSource.Stop();
     }
 
     public void Update()
@@ -189,6 +195,7 @@ public class GameManager : MonoBehaviour
     {
         pauseMenuPanel.SetActive(false);
         isRunning = true;
+        PlayAudio();
     }
     public void ToggleBuildings()
     {
@@ -360,6 +367,14 @@ public class GameManager : MonoBehaviour
         "Schools: " + schoolBought + "\n" +
         "\n" +
         "Happiness: " + happiness + "/100";
+    }
+
+    public void PlayAudio()
+    {
+        musicSource.loop = true;
+        musicSource.clip = musicClip;
+        musicSource.volume = 0.2f;
+        musicSource.Play();
     }
 
     private void IsGoalAchieved()
