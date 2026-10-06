@@ -82,9 +82,11 @@ public class GameManager : MonoBehaviour
 
     int troopsOut = 0;
     bool choosing = false;
+    
 
     void Start()
     {
+        AudioListener.volume = 0.5f;
         timerTextA.text = "";
         timerTextB.text = "";
         upgradePanel.SetActive(false);
@@ -376,7 +378,10 @@ public class GameManager : MonoBehaviour
         musicSource.volume = 0.2f;
         musicSource.Play();
     }
-
+    public void SetVolume(float value)
+    {
+        AudioListener.volume = 1f - value;
+    }
     private void IsGoalAchieved()
     {
         if (happiness >= goalHappiness && money >= goalMoney)
